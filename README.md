@@ -1,0 +1,59 @@
+
+<h1 align="center">
+  <br>
+  <img src="http://creamostuvideo.com/wp-content/uploads/2021/05/discord-logo.png" alt="Markdownify" width="200">
+  <br>
+  Tobi
+  <br>
+</h1>
+
+<p align="center"> 
+Tobi is a discord music bot that uses low memory and cpu usage.
+</p>
+
+<center>
+  <a href="https://hub.docker.com/repository/docker/xbank/tobi-bot"><img src="https://img.shields.io/docker/v/xbank/tobi-bot/latest" alt="Markdownify"></a>
+  <a href="https://github.com/xBaank/Tobi/actions"><img src="https://img.shields.io/github/workflow/status/xBaank/Tobi/CI/master" alt="Markdownify"></a>
+</center>
+
+
+## Comands
+- help
+- loop
+- pause
+- play
+- resume
+- seek
+- skip
+- stop
+- join
+
+## Key Features
+- Low memory usage
+- Low cpu usage
+- Fully async
+- Low loading time
+
+## Sources
+| Sources  | State |
+| ------------- | --- |
+| Youtube  | DONE |
+| Spotify  | TODO |
+| SoundCloud  | TODO |
+
+## Enviroment variables
+| Variables  | Required |
+| ------------- | --------- |
+| Token  | &#9745; |
+| Prefix  | &#9745; |
+| Sapisid  | &#9744; |
+| Psid  | &#9744; |
+| PacketQueueSize  |  &#9744; |
+
+> **Warning**
+> `Sapisid` and `Psid` are youtube cookies required to make authenticated requests to `www.youtube.com`. 
+
+## SelfHost
+There is a docker image to self host.
+
+<a href="https://hub.docker.com/repository/docker/xbank/tobi-bot"><img src="https://img.shields.io/docker/v/xbank/tobi-bot/latest" alt="Markdownify"></a>
