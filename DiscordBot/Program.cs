@@ -1,4 +1,7 @@
-﻿namespace DiscordBot;
+﻿using System.Runtime;
+using DiscordBot.MusicPlayer.Buffers;
+
+namespace DiscordBot;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -34,6 +37,19 @@ internal static class Program
             .AddJsonFile("appsettings.json", true, true)
             .AddJsonFile($"appsettings.{enviroment}.json", true)
             .Build();
+        
+        var lowLactency = (GetEnvironmentVariable("LowLatency") ?? config["LowLatency"] ?? string.Empty) == "true";
+        if(lowLactency)
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+        
+        var buffer = GetEnvironmentVariable("Buffer") ?? config["Buffer"] ?? string.Empty;
+        
+        
+        PlayerBufferFactory bufferFactory = PlayerBufferFactories.CreateMatroska;
+        
+        if(buffer == "Ffmpeg")
+            bufferFactory = PlayerBufferFactories.CreateFFmpeg;
+
 
         var discord = new DiscordShardedClient(new DiscordConfiguration
         {
@@ -50,7 +66,7 @@ internal static class Program
             Services = new ServiceCollection()
                 .AddPlayer(i => i
                     .WithLifeTime(Scoped)
-                    .WithPlayerBufferFactory(PlayerBufferFactories.CreateMatroska)
+                    .WithPlayerBufferFactory(bufferFactory)
                     .WithSapisid(GetEnvironmentVariable("Sapisid") ?? config["Sapisid"])
                     .WithPsid(GetEnvironmentVariable("Psid") ?? config["Psid"])
                 )
@@ -60,7 +76,6 @@ internal static class Program
         });
 
         commands.RegisterCommands<MusicModule>();
-
 
         var voiceNextConfig = new VoiceNextConfiguration
         {
