@@ -1,11 +1,11 @@
-﻿namespace DiscordBot.Tests.Handlers;
+﻿using DiscordBot.MusicPlayer.Tracks.Inmutable;
 
-using System;
+namespace DiscordBot.Tests.Handlers;
+
 using System.Threading.Tasks;
 using DiscordBot.Controllers;
 using Moq;
 using MusicPlayer.Notifications;
-using MusicPlayer.Tracks;
 using PlayerHandlers;
 using Proxies.Channels;
 using Xunit;

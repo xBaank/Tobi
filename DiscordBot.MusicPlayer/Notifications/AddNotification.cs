@@ -1,7 +1,8 @@
-﻿namespace DiscordBot.MusicPlayer.Notifications;
+﻿using DiscordBot.MusicPlayer.Tracks.Inmutable;
+
+namespace DiscordBot.MusicPlayer.Notifications;
 
 using MediatR;
-using Tracks;
 
 /// <summary>
 ///     Notification used when a song finish playing

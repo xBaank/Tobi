@@ -1,4 +1,4 @@
-﻿namespace DiscordBot.MusicPlayer.Tracks;
+﻿namespace DiscordBot.MusicPlayer.Tracks.Inmutable;
 
 /// <summary>
 ///     Represents metadata of a song, playlist, streaming, etc.

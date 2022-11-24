@@ -1,3 +1,5 @@
+using DiscordBot.MusicPlayer.Tracks.Inmutable;
+
 namespace DiscordBot.MusicPlayer.Tests;
 
 using System;
