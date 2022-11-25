@@ -30,6 +30,6 @@ jobs:
     - name: Install ffmpeg
       run: sudo apt install -y ffmpeg
     - name: Build
-      run: dotnet build
+      run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity diag
