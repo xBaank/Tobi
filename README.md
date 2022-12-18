@@ -13,7 +13,7 @@ Tobi is a discord music bot that uses low memory and cpu usage.
 
 <center>
   <a href="https://hub.docker.com/repository/docker/xbank/tobi-bot"><img src="https://img.shields.io/docker/v/xbank/tobi-bot/latest" alt="Markdownify"></a>
-  <a href="https://github.com/xBaank/Tobi/actions"><img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/xBaank/Tobi/.NET/main"></a>
+  <a href="https://github.com/xBaank/Tobi/actions"><img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/actions/workflow/status/xBaank/Tobi/dotnet.yml?branch=main"></a>
 </center>
 
 
