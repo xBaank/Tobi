@@ -53,7 +53,10 @@ Tobi is a discord music bot that uses low memory and cpu usage.
 > **Warning**
 > `Sapisid` and `Psid` are youtube cookies required to make authenticated requests to `www.youtube.com`. 
 
-## SelfHost
+## Docker
 There is a docker image to self host.
 
-<a href="https://hub.docker.com/repository/docker/xbank/tobi-bot"><img src="https://img.shields.io/docker/v/xbank/tobi-bot/latest" alt="Markdownify"></a>
+To run it use 
+```bash
+docker run -d -e Token=OTI1MzQ0Nzg0MDc0Mjc2ODk0.GJGcvp.xlLjUmBlNnhFVLszad912448YHJLele4JKpO_0 -e Prefix=! xbank/tobi-bot:latest
+```
