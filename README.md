@@ -28,6 +28,15 @@ Tobi is a discord music bot that uses low memory and cpu usage.
 - stop
 - join
 
+## Screenshots
+![image](.assets/help.png)
+![image](.assets/play.png)
+![image](.assets/seek.png)
+![image](.assets/pause.png)
+![image](.assets/resume.png)
+![image](.assets/loop.png)
+![image](.assets/skip.png)
+
 ## Key Features
 - Low memory usage
 - Low cpu usage
