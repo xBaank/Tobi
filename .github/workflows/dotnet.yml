@@ -21,10 +21,16 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: apt clean
-      run: sudo apt clean -y
     - name: apt update
       run: sudo apt update -y
+    - name: Add ffmpeg5 repo
+      run: sudo add-apt-repository ppa:savoury1/ffmpeg5 -y
+    - name: Add ffmpeg4 repo
+      run: sudo add-apt-repository ppa:savoury1/ffmpeg4 -y
+    - name: apt update
+      run: sudo apt update -y
+    - name: Upgrade apt
+      run: sudo apt full-upgrade
     - name: Install ffmpeg
       run: sudo apt install -y ffmpeg
     - name: Build
