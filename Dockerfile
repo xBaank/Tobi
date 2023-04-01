@@ -1,11 +1,11 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 WORKDIR /app
 
 RUN apt update
 RUN apt install libsodium-dev -y
 RUN apt install libopus-dev  -y
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["DiscordBot/DiscordBot.csproj", "DiscordBot/"]
 COPY ["DiscordBot.MusicPlayer/DiscordBot.MusicPlayer.csproj", "DiscordBot.MusicPlayer/"]
