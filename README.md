@@ -67,5 +67,5 @@ There is a docker image to self host.
 
 To run it use 
 ```bash
-docker run -d -e Token=OTI1MzQ0Nzg0MDc0Mjc2ODk0.GJGcvp.xlLjUmBlNnhFVLszad912448YHJLele4JKpO_0 -e Prefix=! xbank/tobi-bot:latest
+docker run -d -e Token=PutHereYourToken -e Prefix=! xbank/tobi-bot:latest
 ```
