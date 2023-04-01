@@ -3,36 +3,15 @@ using DiscordBot.MusicPlayer.Tracks.Inmutable;
 namespace DiscordBot.MusicPlayer.Tests;
 
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using DownloadHandlers;
-using FFmpeg.AutoGen;
 using Moq;
 using Notifications;
 using Tracks;
 using YoutubeExplode;
-using static System.OperatingSystem;
 
 public static class Utils
 {
-    public static void SetUpFFmpeg(string? path = null)
-    {
-        if (path is not null)
-        {
-            ffmpeg.RootPath = Directory.GetCurrentDirectory() + path;
-            return;
-        }
-
-
-        if (IsWindows())
-            ffmpeg.RootPath = Directory.GetCurrentDirectory() + "/FFmpegBinaries";
-
-        if (IsLinux())
-        {
-            ffmpeg.RootPath = @"/usr/lib/x86_64-linux-gnu/";
-        }
-    }
-
     public static async Task<IDownloadUrlHandler> GetDownloadHandler(string url)
     {
         var client = new YoutubeClient();
