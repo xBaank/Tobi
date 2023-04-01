@@ -39,7 +39,7 @@
         <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
         <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
         <PackageReference Include="Tobi.DSharpPlus.CommandsNext" Version="4.2.1.2" />
-        <PackageReference Include="Tobi.DSharpPlus.VoiceNext" Version="4.2.1.4" />
+        <PackageReference Include="Tobi.DSharpPlus.VoiceNext" Version="4.2.1.5" />
     </ItemGroup>
 
     <ItemGroup>
