@@ -21,8 +21,6 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Add ffmpeg5 repo
-      run: sudo add-apt-repository ppa:savoury1/ffmpeg5 -y
     - name: apt clean
       run: sudo apt clean -y
     - name: apt update
