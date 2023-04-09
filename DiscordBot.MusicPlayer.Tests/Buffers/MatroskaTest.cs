@@ -44,8 +44,6 @@ public class MatroskaTest
         var result = await buffer.Seek(100);
 
         result.Should().BeTrue();
-
-        Assert.True(result);
     }
 
     [Theory]
