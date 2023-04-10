@@ -1,4 +1,7 @@
-﻿namespace DiscordBot.Modules;
+﻿using Microsoft.Extensions.DependencyInjection;
+using static DiscordBot.Utils.ScopedLocator;
+
+namespace DiscordBot.Modules;
 
 using System;
 using System.Threading.Tasks;
@@ -6,20 +9,29 @@ using Controllers;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Proxies.Dsharp.Channels;
-using static DSharpPlus.CommandsNext.Attributes.ModuleLifespan;
 
-[ModuleLifespan(Scoped)]
+[ModuleLifespan(ModuleLifespan.Singleton)]
 public class MusicModule : BaseCommandModule
 {
-    private readonly IMusicController _musicController;
+    private IMusicController _musicController;
+    private readonly IServiceProvider _serviceProvider;
+    
+    public MusicModule(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-    public MusicModule(IMusicController musicController) => _musicController = musicController;
 
     public override Task BeforeExecutionAsync(CommandContext command)
     {
+        var scope = TryGetScopedProvider(command.Guild.Id);
+        if (scope is null)
+        {
+            scope = _serviceProvider.CreateScope();
+            AddScopedProvider(command.Guild.Id, scope);
+        }
+        _musicController = scope.ServiceProvider.GetRequiredService<IMusicController>();
         //Set the channel from where the command was executed
         var channel = new TextChannelDsharpProxy(command.Channel);
         _musicController.TextChannel = channel;
+        
         return Task.CompletedTask;
     }
 
