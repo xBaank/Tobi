@@ -69,7 +69,7 @@ Tobi is a discord music bot that uses low memory and cpu usage.
 4. Go to the `Storage` tab
 5. Go to `Cookies` and copy the `SAPISID` and `__Secure-1PSID` values
 
-## Requirments
+## Requirements
 To use this application you need to have installed  [.NET 7 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 
 ## Docker
