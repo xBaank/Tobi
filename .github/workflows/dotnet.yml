@@ -25,11 +25,11 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: publish win
-      run: dotnet publish -c Release -r win-x64
+      run: dotnet publish -c Release -r win-x64 --no-self-contained
     - name: publish ubuntu
-      run: dotnet publish -c Release -r ubuntu-x64
+      run: dotnet publish -c Release -r ubuntu-x64 --no-self-contained
     - name: publish mac
-      run: dotnet publish -c Release -r osx-x64
+      run: dotnet publish -c Release -r osx-x64 --no-self-contained
     - name: install zip
       run: sudo apt install zip
     - name: zip win
