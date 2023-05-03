@@ -27,6 +27,11 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      
+  publish:
+    runs-on: ubuntu-latest
+  
+    steps:
     - name: publish win
       run: dotnet publish -c Release -r win-x64 --no-self-contained
     - name: publish ubuntu
