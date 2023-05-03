@@ -6,6 +6,9 @@ on:
     tags: ["*"]
   pull_request:
     branches: ["*"]
+env:
+  SAPISID: ${{ secrets.SAPISID }}
+  PSID: ${{ secrets.PSID }}
 
 jobs:
   build:
