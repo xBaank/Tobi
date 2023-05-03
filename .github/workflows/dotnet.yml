@@ -7,8 +7,8 @@ on:
   pull_request:
     branches: ["*"]
 env:
-  SAPISID: ${{ secrets.SAPISID }}
-  PSID: ${{ secrets.PSID }}
+  SAPISID: ${{ vars.SAPISID }}
+  PSID: ${{ vars.PSID }}
 
 jobs:
   build:
