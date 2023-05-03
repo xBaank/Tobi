@@ -1,5 +1,6 @@
 ﻿namespace DiscordBot.MusicPlayer.Tests.Services;
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
