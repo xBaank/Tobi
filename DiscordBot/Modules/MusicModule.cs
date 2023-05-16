@@ -1,12 +1,13 @@
-﻿namespace DiscordBot.Modules;
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Controllers;
+using DiscordBot.Controllers;
+using DiscordBot.Proxies.Dsharp.Channels;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using Proxies.Dsharp.Channels;
-using static DSharpPlus.CommandsNext.Attributes.ModuleLifespan;
+
+namespace DiscordBot.Modules;
+
+using static ModuleLifespan;
 
 [ModuleLifespan(Scoped)]
 public class MusicModule : BaseCommandModule
@@ -54,7 +55,10 @@ public class MusicModule : BaseCommandModule
 
     [Command("seek")]
     public async Task SeekMusic(CommandContext command, string? timeStamp = null) => await _musicController.Seek(timeStamp);
-    
+
+    [Command("time")]
+    public async Task TimeMusic(CommandContext command) => await _musicController.Time();
+
     [Command("join")]
     public async Task JoinMusic(CommandContext command)
     {

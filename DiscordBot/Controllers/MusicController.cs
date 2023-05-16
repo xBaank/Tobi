@@ -1,20 +1,22 @@
-﻿namespace DiscordBot.Controllers;
-
+﻿using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Exceptions;
-using MusicPlayer.Controllers;
+using DiscordBot.Exceptions;
+using DiscordBot.MusicPlayer.Controllers;
+using DiscordBot.Proxies;
+using DiscordBot.Proxies.Channels;
+using DiscordBot.Utils;
 using Nito.AsyncEx;
-using Proxies;
-using Proxies.Channels;
-using Utils;
-using static System.TimeSpan;
+
+namespace DiscordBot.Controllers;
+
+using static TimeSpan;
 
 public class MusicController : IMusicController
 {
-    private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private readonly IPlayer _musicPlayer;
+    private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private IVoiceConnection? _voiceConnection;
 
     public MusicController(IPlayer musicPlayer) => _musicPlayer = musicPlayer;
@@ -34,23 +36,17 @@ public class MusicController : IMusicController
 
         _voiceConnection = await voiceChannel.ConnectToVoiceChannel();
         await _musicPlayer.SetStream(_voiceConnection?.GetStream() ?? throw new VoiceConnectionException("Couldn't connect to voice channel"));
-        
-        _voiceConnection.VoiceDisconnected += OnVoiceConnectionOnVoiceDisconnected;
-    }
 
-    private async Task OnVoiceConnectionOnVoiceDisconnected()
-    {
-        using var _ = await _semaphoreSlim.LockAsync();
-        if (!_musicPlayer.IsPaused)
-            await _musicPlayer.Pause();
+        _voiceConnection.VoiceDisconnected += OnVoiceConnectionOnVoiceDisconnected;
     }
 
 
     public async Task Pause() => await _musicPlayer.Pause();
+
     public async Task Disconnect()
     {
         using var _ = await _semaphoreSlim.LockAsync();
-        if(_voiceConnection is null) return;
+        if (_voiceConnection is null) return;
         _voiceConnection.VoiceDisconnected -= OnVoiceConnectionOnVoiceDisconnected;
         _voiceConnection?.Disconnect();
     }
@@ -59,7 +55,7 @@ public class MusicController : IMusicController
     {
         if (_voiceConnection?.IsConnected == false || _voiceConnection is null)
             return;
-        
+
         await _musicPlayer.Resume();
     }
 
@@ -75,7 +71,7 @@ public class MusicController : IMusicController
 
         if (isParsed)
         {
-            await _musicPlayer.Seek((long)time.TotalMilliseconds);
+            await _musicPlayer.Seek((long) time.TotalMilliseconds);
             return;
         }
 
@@ -110,5 +106,26 @@ public class MusicController : IMusicController
             playtask = _musicPlayer.Play();
 
         await Task.WhenAll(addTask, playtask ?? Task.CompletedTask);
+    }
+
+    public async Task Time()
+    {
+        var song = _musicPlayer.CurrentSong;
+
+        if (TextChannel is null) return;
+        if (song is null || _musicPlayer.HasFinished)
+        {
+            await TextChannel.SendInfo("No song is playing");
+            return;
+        }
+
+        await TextChannel.SendInfo($"{_musicPlayer.CurrentTime:hh':'mm':'ss}/{song.TotalTime:hh':'mm':'ss}");
+    }
+
+    private async Task OnVoiceConnectionOnVoiceDisconnected()
+    {
+        using var _ = await _semaphoreSlim.LockAsync();
+        if (!_musicPlayer.IsPaused)
+            await _musicPlayer.Pause();
     }
 }

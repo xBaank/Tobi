@@ -1,15 +1,15 @@
-﻿namespace DiscordBot.MusicPlayer.Controllers;
-
-using Buffers;
-using Exceptions;
-using Extensions;
-using Factories;
+﻿using DiscordBot.MusicPlayer.Buffers;
+using DiscordBot.MusicPlayer.Exceptions;
+using DiscordBot.MusicPlayer.Extensions;
+using DiscordBot.MusicPlayer.Factories;
+using DiscordBot.MusicPlayer.Notifications;
+using DiscordBot.MusicPlayer.Services;
+using DiscordBot.MusicPlayer.Tracks;
+using DiscordBot.MusicPlayer.Tracks.Inmutable;
 using MediatR;
 using Nito.AsyncEx;
-using Notifications;
-using Services;
-using Tracks;
-using Tracks.Inmutable;
+
+namespace DiscordBot.MusicPlayer.Controllers;
 
 public class Player : IPlayer
 {
@@ -22,7 +22,6 @@ public class Player : IPlayer
     private readonly Queue<ReadOnlySong> _songs = new();
     private Task? _autoPlayTask;
 
-    private Song? _currentSong;
     private IPlayerBuffer? _playerBuffer;
 
     private Task? _playingTask;
@@ -43,13 +42,17 @@ public class Player : IPlayer
 
     public bool HasNextSong => _songs.Any();
 
-    public bool IsPlaying => _currentSong is { State: PlayState.Playing };
+    public bool IsPlaying => CurrentSong is {State: PlayState.Playing};
 
-    public bool IsPaused => _currentSong is { State: PlayState.Paused };
+    public bool IsPaused => CurrentSong is {State: PlayState.Paused};
 
     public bool IsLooping { get; private set; }
 
-    public bool HasFinished => _currentSong is { State: PlayState.Finished } or null;
+    public bool HasFinished => CurrentSong is {State: PlayState.Finished} or null;
+
+    public Song? CurrentSong { get; private set; }
+
+    public TimeSpan CurrentTime => _playerBuffer?.CurrentTime ?? CurrentSong?.CurrentTime ?? TimeSpan.Zero;
 
     public IEnumerable<ReadOnlySong> SongQueue => _songs;
 
@@ -64,7 +67,7 @@ public class Player : IPlayer
             return;
         }
 
-        if (_currentSong is null)
+        if (CurrentSong is null)
         {
             await NotifyPause(new NoSongException("No song playing"));
             return;
@@ -72,15 +75,15 @@ public class Player : IPlayer
 
         if (IsPaused)
         {
-            await NotifyPause(new AlreadyPausedException($"{_currentSong!.ReadOnlySong.Title} is already paused"));
+            await NotifyPause(new AlreadyPausedException($"{CurrentSong!.ReadOnlySong.Title} is already paused"));
             return;
         }
 
-        _currentSong.CurrentTime = _playerBuffer?.CurrentTime ?? TimeSpan.Zero;
-        _currentSong.State = PlayState.Paused;
+        CurrentSong.CurrentTime = _playerBuffer?.CurrentTime ?? TimeSpan.Zero;
+        CurrentSong.State = PlayState.Paused;
         await CancelAndWaitFinishPlaying();
 
-        await NotifyPause(_currentSong);
+        await NotifyPause(CurrentSong);
     }
 
     public async Task Loop()
@@ -99,18 +102,18 @@ public class Player : IPlayer
             return;
         }
 
-        if (_currentSong is null)
+        if (CurrentSong is null)
         {
             await NotifyStop(new NoSongException("No song playing"));
             return;
         }
 
-        _currentSong.State = PlayState.Finished;
+        CurrentSong.State = PlayState.Finished;
         IsLooping = false;
         await CancelAndWaitFinishPlaying();
         _songs.Clear();
 
-        await NotifyStop(_currentSong);
+        await NotifyStop(CurrentSong);
     }
 
     public async Task Skip()
@@ -131,7 +134,7 @@ public class Player : IPlayer
             return;
         }
 
-        if (_currentSong is null)
+        if (CurrentSong is null)
         {
             await NotifySkip(new NoSongException("No song playing"));
             return;
@@ -143,10 +146,10 @@ public class Player : IPlayer
             return;
         }
 
-        _currentSong.State = PlayState.Finished;
+        CurrentSong.State = PlayState.Finished;
         await CancelAndWaitFinishPlaying();
 
-        await NotifySkip(_currentSong);
+        await NotifySkip(CurrentSong);
     }
 
     public async Task Add(string query)
@@ -186,7 +189,7 @@ public class Player : IPlayer
     public async Task Seek(long timeStamp)
     {
         using var lockAsync = await _lock.LockAsync();
-        if (HasFinished || _currentSong is null)
+        if (HasFinished || CurrentSong is null)
         {
             await NotifySeek(new NoSongException("No song playing"));
             return;
@@ -198,28 +201,28 @@ public class Player : IPlayer
             return;
         }
 
-        if (_currentSong.TotalTime is null)
+        if (CurrentSong.TotalTime is null)
         {
             await NotifySeek(new InvalidTimeException("Song not loaded fully yet"));
             return;
         }
 
-        if (_currentSong.TotalTime?.TotalMilliseconds < timeStamp)
+        if (CurrentSong.TotalTime?.TotalMilliseconds < timeStamp)
         {
-            await NotifySeek(new InvalidTimeException($"{TimeSpan.FromMilliseconds(timeStamp):c} is greater than the duration of {_currentSong.ReadOnlySong.Title}"));
+            await NotifySeek(new InvalidTimeException($"{TimeSpan.FromMilliseconds(timeStamp):c} is greater than the duration of {CurrentSong.ReadOnlySong.Title}"));
             return;
         }
 
         if (_playerBuffer is null)
         {
-            _currentSong.CurrentTime = TimeSpan.FromMilliseconds(timeStamp);
-            await NotifySeek(_currentSong, timeStamp);
+            CurrentSong.CurrentTime = TimeSpan.FromMilliseconds(timeStamp);
+            await NotifySeek(CurrentSong, timeStamp);
             return;
         }
 
         if (await _playerBuffer.Seek(timeStamp))
         {
-            await NotifySeek(_currentSong, timeStamp);
+            await NotifySeek(CurrentSong, timeStamp);
             return;
         }
 
@@ -227,6 +230,7 @@ public class Player : IPlayer
     }
 
     public Task WaitFinishPlaying() => _autoPlayTask ?? _playingTask ?? Task.CompletedTask;
+
     public Task WaitFinishPlayingCurrent() => _playingTask ?? Task.CompletedTask;
 
     private async Task Play(Func<Result, Task> notifyDelegate)
@@ -254,16 +258,16 @@ public class Player : IPlayer
                 return;
             }
 
-            if (_currentSong?.State == PlayState.Playing)
+            if (CurrentSong?.State == PlayState.Playing)
             {
-                await notifyDelegate(new AlreadyPlayingException($"{_currentSong.ReadOnlySong.Title} is already playing"));
+                await notifyDelegate(new AlreadyPlayingException($"{CurrentSong.ReadOnlySong.Title} is already playing"));
                 return;
             }
 
-            if (_currentSong != null)
+            if (CurrentSong != null)
             {
-                _currentSong.State = PlayState.Playing;
-                await notifyDelegate(_currentSong);
+                CurrentSong.State = PlayState.Playing;
+                await notifyDelegate(CurrentSong);
             }
 
             _playingTask = StartPlaying();
@@ -303,10 +307,10 @@ public class Player : IPlayer
 
     private void CheckLoop()
     {
-        if (_currentSong is null) return;
+        if (CurrentSong is null) return;
 
         if (IsLooping)
-            _songs.Enqueue(_currentSong.ReadOnlySong);
+            _songs.Enqueue(CurrentSong.ReadOnlySong);
     }
 
     private Exception? CheckForSong()
@@ -318,7 +322,7 @@ public class Player : IPlayer
         var nextSong = GetNextSong();
 
         nextSong
-            .OnSuccess(song => _currentSong = song)
+            .OnSuccess(song => CurrentSong = song)
             .OnFailure(ex => error = ex);
 
         return error;
@@ -335,7 +339,7 @@ public class Player : IPlayer
 
     private async Task StartPlaying()
     {
-        if (_currentSong is null)
+        if (CurrentSong is null)
             return;
 
         if (_stream is null)
@@ -344,23 +348,23 @@ public class Player : IPlayer
         try
         {
             await using (_stream)
-            await using (_playerBuffer = await _playerBufferFactory(_currentSong.ReadOnlySong.DownloadUrlHandler, _playingToken.Token))
+            await using (_playerBuffer = await _playerBufferFactory(CurrentSong.ReadOnlySong.DownloadUrlHandler, _playingToken.Token))
             {
-                _currentSong.TotalTime = _playerBuffer.TotalTime;
-                await _playerBuffer.Seek((long)_currentSong.CurrentTime.TotalMilliseconds);
+                CurrentSong.TotalTime = _playerBuffer.TotalTime;
+                await _playerBuffer.Seek((long) CurrentSong.CurrentTime.TotalMilliseconds);
                 await _playerBuffer.WriteFile(_stream, _playingToken.Token);
             }
         }
         catch (OperationCanceledException)
         {
             //Three cases, pause, stop or skip
-            if (_currentSong.State == PlayState.Paused)
+            if (CurrentSong.State == PlayState.Paused)
                 return;
         }
         catch (Exception)
         {
             //If there is an exception the song will be excluded from the queue if looping is enabled
-            _currentSong.State = PlayState.Finished;
+            CurrentSong.State = PlayState.Finished;
             await NotifyFinish(new MusicPlayerException("Error while playing song"));
             return;
         }
@@ -371,9 +375,9 @@ public class Player : IPlayer
         }
 
         //We only reach this point if the song has finished playing
-        _currentSong.State = PlayState.Finished;
+        CurrentSong.State = PlayState.Finished;
         CheckLoop();
-        await NotifyFinish(_currentSong);
+        await NotifyFinish(CurrentSong);
     }
 
     private Task CancelAndWaitFinishPlaying()
@@ -383,12 +387,20 @@ public class Player : IPlayer
     }
 
     private Task NotifyPlay(Result result) => _mediator.Publish(new PlayNotification(result));
+
     private Task NotifyLoop(bool isLooping) => _mediator.Publish(new LoopNotification(isLooping));
+
     private Task NotifyResume(Result result) => _mediator.Publish(new ResumeNotification(result));
+
     private Task NotifyFinish(Result result) => _mediator.Publish(new FinishNotification(result));
+
     private Task NotifyPause(Result result) => _mediator.Publish(new PauseNotification(result));
+
     private Task NotifyStop(Result result) => _mediator.Publish(new StopNotification(result));
+
     private Task NotifySeek(Result result, long timeStamp = default) => _mediator.Publish(new SeekNotification(result, timeStamp));
+
     private Task NotifySkip(Result result) => _mediator.Publish(new SkipNotification(result));
+
     private async Task NotifyAdd(Task<MediaInfo?> mediaInfo) => await _mediator.Publish(new AddNotification(await mediaInfo));
 }

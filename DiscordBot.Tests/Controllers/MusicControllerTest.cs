@@ -1,19 +1,25 @@
-﻿namespace DiscordBot.Tests.Controllers;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using DiscordBot.Controllers;
-using Exceptions;
+using DiscordBot.Exceptions;
+using DiscordBot.MusicPlayer.Controllers;
+using DiscordBot.MusicPlayer.DownloadHandlers;
+using DiscordBot.MusicPlayer.Tracks;
+using DiscordBot.MusicPlayer.Tracks.Inmutable;
+using DiscordBot.Proxies;
+using DiscordBot.Proxies.Channels;
 using Moq;
-using MusicPlayer.Controllers;
-using Proxies;
-using Proxies.Channels;
 using Xunit;
-using static Moq.It;
+
+namespace DiscordBot.Tests.Controllers;
+
+using static It;
 
 public class MusicControllerTest
 {
+    private readonly Mock<IDownloadUrlHandler> _downloadUrlHandlerMock = new();
+
     //Test music controller
     private readonly MusicController _musicController;
     private readonly Mock<IPlayer> _playerMock = new();
@@ -23,7 +29,7 @@ public class MusicControllerTest
 
     public MusicControllerTest() => _musicController = new MusicController(_playerMock.Object)
     {
-        TextChannel = _textChannelMock.Object,
+        TextChannel = _textChannelMock.Object
     };
 
     [Fact]
@@ -133,7 +139,7 @@ public class MusicControllerTest
         _voiceConnectionMock.Setup(i => i.GetStream()).Returns(stream.Object);
         _voiceConnectionMock.Setup(i => i.IsConnected).Returns(true);
         await _musicController.SetVoiceChannel(_voiceChannelMock.Object);
-        
+
         await _musicController.Resume();
 
         _playerMock.Verify(i => i.Resume());
@@ -170,5 +176,42 @@ public class MusicControllerTest
 
         _playerMock.Verify(i => i.Seek(50), Times.Never);
         _textChannelMock.Verify(i => i.SendInfo(IsAny<string>()));
+    }
+
+    [Fact]
+    public async Task ShouldTime()
+    {
+        _playerMock.SetupGet(i => i.HasFinished).Returns(false);
+        _playerMock.SetupGet(i => i.CurrentSong).Returns(new Song(new ReadOnlySong("", "", "", "", TimeSpan.Zero, _downloadUrlHandlerMock.Object)));
+
+        await _musicController.Time();
+
+        _playerMock.VerifyGet(i => i.HasFinished);
+        _playerMock.VerifyGet(i => i.CurrentSong);
+        _textChannelMock.Verify(i => i.SendInfo(IsAny<string>()));
+    }
+
+    [Fact]
+    public async Task ShouldNotTimeWhenHasFinished()
+    {
+        _playerMock.SetupGet(i => i.HasFinished).Returns(true);
+        _playerMock.SetupGet(i => i.CurrentSong).Returns(new Song(new ReadOnlySong("", "", "", "", TimeSpan.Zero, _downloadUrlHandlerMock.Object)));
+
+        await _musicController.Time();
+
+        _playerMock.VerifyGet(i => i.HasFinished);
+        _textChannelMock.Verify(i => i.SendInfo("No song is playing"));
+    }
+
+    [Fact]
+    public async Task ShouldNotTimeWhenNull()
+    {
+        _playerMock.SetupGet(i => i.HasFinished).Returns(false);
+        _playerMock.SetupGet(i => i.CurrentSong).Returns(null as Song);
+
+        await _musicController.Time();
+
+        _playerMock.VerifyGet(i => i.HasFinished, Times.Exactly(0));
+        _textChannelMock.Verify(i => i.SendInfo("No song is playing"));
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace DiscordBot.MusicPlayer.Controllers;
+﻿using DiscordBot.MusicPlayer.Exceptions;
+using DiscordBot.MusicPlayer.Tracks;
+using DiscordBot.MusicPlayer.Tracks.Inmutable;
 
-using Exceptions;
-using Tracks.Inmutable;
+namespace DiscordBot.MusicPlayer.Controllers;
 
 public interface IPlayer
 {
@@ -19,6 +20,10 @@ public interface IPlayer
     ///     Defines if the player HasFinished playing the current song, by default is false.
     /// </summary>
     public bool HasFinished { get; }
+
+    public Song? CurrentSong { get; }
+
+    public TimeSpan CurrentTime { get; }
 
     public IEnumerable<ReadOnlySong> SongQueue { get; }
 
