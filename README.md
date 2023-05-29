@@ -2,9 +2,6 @@
 <h1 align="center">
   <br>
   <img src="./.assets/logo.jpeg" alt="Markdownify" width="200">
-  <br>
-  Tobi
-  <br>
 </h1>
 
 <p align="center"> 
