@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <img src="http://creamostuvideo.com/wp-content/uploads/2021/05/discord-logo.png" alt="Markdownify" width="200">
+  <img src="./.assets/logo.jpeg" alt="Markdownify" width="200">
   <br>
   Tobi
   <br>
