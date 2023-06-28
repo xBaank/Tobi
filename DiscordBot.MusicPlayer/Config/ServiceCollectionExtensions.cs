@@ -1,10 +1,10 @@
-﻿namespace DiscordBot.MusicPlayer.Config;
-
-using Controllers;
-using Factories;
+﻿using DiscordBot.MusicPlayer.Controllers;
+using DiscordBot.MusicPlayer.Factories;
+using DiscordBot.MusicPlayer.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Services;
 using YoutubeExplode;
+
+namespace DiscordBot.MusicPlayer.Config;
 
 public static class ServiceCollectionExtensions
 {
@@ -16,8 +16,8 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .AddSingleton(_ =>
             {
-                if(playerConfig.Sapisid is not null && playerConfig.Psid is not null)
-                    return new YoutubeClient(new CookiesSettings(playerConfig.Sapisid, playerConfig.Psid));
+                if (playerConfig.Sapisid is not null && playerConfig.Psid is not null)
+                    return new YoutubeClient(new HttpClient(new AuthHandler(playerConfig.Sapisid, playerConfig.Psid)));
 
                 return new YoutubeClient();
             })
