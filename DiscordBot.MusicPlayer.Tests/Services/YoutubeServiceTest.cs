@@ -1,22 +1,26 @@
-﻿namespace DiscordBot.MusicPlayer.Tests.Services;
-
-using System;
+﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using DiscordBot.MusicPlayer.Config;
+using DiscordBot.MusicPlayer.Services;
 using FluentAssertions;
-using MusicPlayer.Services;
 using Xunit;
 using YoutubeExplode;
-using static System.Environment;
+
+namespace DiscordBot.MusicPlayer.Tests.Services;
+
+using static Environment;
+
 public class YoutubeServiceTest
 {
     private readonly IMusicService _musicService;
 
-    public YoutubeServiceTest() {
+    public YoutubeServiceTest()
+    {
         var sapisid = GetEnvironmentVariable("SAPISID") ?? throw new Exception("Sapisid not found");
         var psid = GetEnvironmentVariable("PSID") ?? throw new Exception("Psid not found");
-        var cookiesettings = new CookiesSettings(sapisid, psid);
-        _musicService = new YoutubeService(new YoutubeClient(cookiesettings));
+        _musicService = new YoutubeService(new YoutubeClient(new HttpClient(new AuthHandler(sapisid, psid))));
     }
 
     [Fact]
