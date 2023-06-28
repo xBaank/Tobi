@@ -80,4 +80,4 @@ docker run -d -e Token=PutHereYourToken -e Sapisid=Value -e Psid=Value -e Prefix
 
 ## Credits
 - DsharpPlus - Thanks to [DsharpPlus](https://github.com/DSharpPlus/DSharpPlus), This project uses a [Fork](https://github.com/xBaank/DSharpPlus/tree/v4.2.1-tobi).
-- YoutubeExplode - Thanks to [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode), This project uses a [Fork](https://github.com/xBaank/YoutubeExplode/tree/tobi).
+- YoutubeExplode - Thanks to [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode).
