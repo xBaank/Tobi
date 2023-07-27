@@ -57,7 +57,7 @@ Tobi is a discord music bot that uses low memory and cpu usage.
 | Psid  | &#9744; |
 | PacketQueueSize  |  &#9744; |
 
-> [!WARNING]
+> [!WARNING]\
 > `Sapisid` and `Psid` are youtube cookies required to make authenticated requests to `www.youtube.com`. If you don't provide them you will not be able to play restricted videos.
 
 ## How to get Sapisid and Psid to access restricted videos
