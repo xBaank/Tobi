@@ -18,9 +18,14 @@ public class YoutubeServiceTest
 
     public YoutubeServiceTest()
     {
-        var sapisid = GetEnvironmentVariable("SAPISID") ?? throw new Exception("Sapisid not found");
-        var psid = GetEnvironmentVariable("PSID") ?? throw new Exception("Psid not found");
-        _musicService = new YoutubeService(new YoutubeClient(new HttpClient(new AuthHandler(sapisid, psid))));
+        var sapisid = GetEnvironmentVariable("SAPISID");
+        var psid = GetEnvironmentVariable("PSID");
+
+        if (sapisid is not null && psid is not null)
+            _musicService = new YoutubeService(new YoutubeClient(new HttpClient(new AuthHandler(sapisid, psid))));
+        else
+            _musicService = new YoutubeService(new YoutubeClient());
+
     }
 
     [Fact]

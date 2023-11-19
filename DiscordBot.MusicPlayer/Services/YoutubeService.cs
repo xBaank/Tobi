@@ -1,12 +1,12 @@
-﻿namespace DiscordBot.MusicPlayer.Services;
-
-using DownloadHandlers;
-using Tracks;
-using Tracks.Inmutable;
+﻿using DiscordBot.MusicPlayer.DownloadHandlers;
+using DiscordBot.MusicPlayer.Tracks.Inmutable;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.Videos;
+
+namespace DiscordBot.MusicPlayer.Services;
+
 using static String;
 
 public class YoutubeService : IMusicService
@@ -26,6 +26,7 @@ public class YoutubeService : IMusicService
                     video.Thumbnails.FirstOrDefault()?.Url ?? Empty,
                     video.Duration ?? TimeSpan.Zero, new YtDownloadUrlHandler(_ytClient, video.Id));
             }
+
             yield break;
         }
 
@@ -37,6 +38,7 @@ public class YoutubeService : IMusicService
             yield return new ReadOnlySong(video.Title, video.Author.ChannelTitle, video.Url,
                 video.Thumbnails.TryGetWithHighestResolution()?.Url ?? Empty,
                 video.Duration ?? TimeSpan.Zero, new YtDownloadUrlHandler(_ytClient, video.Id));
+
             yield break;
         }
 
@@ -92,6 +94,7 @@ public class YoutubeService : IMusicService
     }
 
 
-    private static bool IsPlaylist(string idOrUrl) => PlaylistId.TryParse(idOrUrl) is not null;
+    private static bool IsPlaylist(string url) => PlaylistId.TryParse(url) is not null && url.Contains("youtube.com");
+
     private static bool IsVideo(string idOrUrl) => VideoId.TryParse(idOrUrl) is not null;
 }
