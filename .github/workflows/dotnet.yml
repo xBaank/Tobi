@@ -39,19 +39,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: publish win
       run: dotnet publish -c Release -r win-x64 --no-self-contained
-    - name: publish ubuntu
-      run: dotnet publish -c Release -r ubuntu-x64 --no-self-contained
-    - name: publish mac
-      run: dotnet publish -c Release -r osx-x64 --no-self-contained
     - name: install zip
       run: sudo apt install zip
     - name: zip win
       run: zip -r Tobi-windows.zip DiscordBot/bin/Release/net7.0/win-x64/publish
-    - name: zip mac
-      run: zip -r Tobi-mac.zip DiscordBot/bin/Release/net7.0/osx-x64/publish
-    - name: zip ubuntu
-      run: zip -r Tobi-ubuntu.zip DiscordBot/bin/Release/net7.0/ubuntu-x64/publish
-    
       
     - name: Release
       uses: softprops/action-gh-release@v1
