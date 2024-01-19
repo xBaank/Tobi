@@ -1,11 +1,4 @@
-﻿FROM --platform=$BUILDPLATFORM  mcr.microsoft.com/dotnet/runtime:7.0 AS base
-WORKDIR /app
-
-RUN apt update
-RUN apt install libsodium-dev -y
-RUN apt install libopus-dev  -y
-
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["DiscordBot/DiscordBot.csproj", "DiscordBot/"]
@@ -13,12 +6,12 @@ COPY ["DiscordBot.MusicPlayer/DiscordBot.MusicPlayer.csproj", "DiscordBot.MusicP
 RUN dotnet restore "DiscordBot/DiscordBot.csproj" -a $TARGETARCH
 COPY . .
 WORKDIR "/src/DiscordBot"
-RUN dotnet build "DiscordBot.csproj" -a $TARGETARCH -c Release -o /app/build
+RUN dotnet publish "DiscordBot.csproj" -a $TARGETARCH --self-contained false -c Release --no-restore -o /app/publish
 
-FROM build AS publish
-RUN dotnet publish "DiscordBot.csproj" -a $TARGETARCH --self-contained false -c Release -o /app/publish
-
-FROM base AS final
+FROM --platform=$BUILDPLATFORM  mcr.microsoft.com/dotnet/runtime:7.0 
+RUN apt update
+RUN apt install libsodium-dev -y
+RUN apt install libopus-dev  -y
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "DiscordBot.dll"]
