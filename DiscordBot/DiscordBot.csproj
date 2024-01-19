@@ -6,7 +6,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <Nullable>enable</Nullable>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
@@ -29,17 +29,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="CliWrap" Version="3.6.6"/>
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
 
-        <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
-        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-        <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-        <PackageReference Include="Tobi.DSharpPlus.CommandsNext" Version="4.2.1.2" />
-        <PackageReference Include="Tobi.DSharpPlus.VoiceNext" Version="4.2.1.5" />
+        <PackageReference Include="System.Net.Primitives" Version="4.3.1"/>
+        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
+        <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
+        <PackageReference Include="Tobi.DSharpPlus.CommandsNext" Version="4.2.1.2"/>
+        <PackageReference Include="Tobi.DSharpPlus.VoiceNext" Version="4.2.1.5"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -65,21 +66,21 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Controllers\" />
+        <Folder Include="Controllers\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj" />
+        <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj"/>
     </ItemGroup>
 
     <ProjectExtensions>
         <VisualStudio>
-            <UserProperties />
+            <UserProperties/>
         </VisualStudio>
     </ProjectExtensions>
 
