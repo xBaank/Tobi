@@ -7,7 +7,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Modules;
 using DiscordBot.MusicPlayer.Config;
 using DiscordBot.MusicPlayer.Factories;
-using DiscordBot.Utils;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
@@ -26,7 +25,6 @@ internal static class Program
 {
     public static async Task Main()
     {
-        await LibInstaller.InstallLibsAsync();
         //gets the enviroment to be used when getting the appsettings
         var enviroment = GetEnvironmentVariable("Environment") ??
                          "No environment found, using default appsettings";
