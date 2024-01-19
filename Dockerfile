@@ -1,4 +1,4 @@
-﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-jammy  AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY ["DiscordBot/DiscordBot.csproj", "DiscordBot/"]
@@ -8,7 +8,7 @@ COPY . .
 WORKDIR "/src/DiscordBot"
 RUN dotnet publish "DiscordBot.csproj" -a $TARGETARCH --self-contained false -c Release --no-restore -o /app/publish
 
-FROM  mcr.microsoft.com/dotnet/runtime:7.0 
+FROM  mcr.microsoft.com/dotnet/runtime:8.0-jammy
 ARG TARGETARCH
 RUN apt update
 RUN apt install libsodium-dev:$TARGETARCH -y
