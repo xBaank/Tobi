@@ -4,7 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 

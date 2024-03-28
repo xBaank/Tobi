@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Runtime;
 using System.Threading.Tasks;
 using DiscordBot.Extensions;
 using DiscordBot.Modules;
@@ -25,6 +26,8 @@ internal static class Program
 {
     public static async Task Main()
     {
+        GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+
         //gets the enviroment to be used when getting the appsettings
         var enviroment = GetEnvironmentVariable("Environment") ??
                          "No environment found, using default appsettings";
