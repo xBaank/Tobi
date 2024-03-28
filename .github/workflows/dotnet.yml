@@ -42,7 +42,7 @@ jobs:
     - name: install zip
       run: sudo apt install zip
     - name: zip win
-      run: zip -r Tobi-windows.zip DiscordBot/bin/Release/net7.0/win-x64/publish
+      run: zip -r Tobi-windows.zip DiscordBot/bin/Release/net8.0/win-x64/publish
       
     - name: Release
       uses: softprops/action-gh-release@v1
