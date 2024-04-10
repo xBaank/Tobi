@@ -270,7 +270,7 @@ public class Player : IPlayer
                 await notifyDelegate(CurrentSong);
             }
 
-            _playingTask = Task.Run(StartPlaying, Token);
+            _playingTask = Task.Run(StartPlaying, CancellationToken.None);
 
             if ((_autoPlayTask is null || _autoPlayTask.IsCompleted) && AutoPlay)
                 _autoPlayTask = AutoPlayTask();
